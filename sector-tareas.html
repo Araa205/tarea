@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <style>
+        *{
+            margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+}       
+
+body{
+    background-image: url(imagenes/pexels-hngstrm-1793525.jpg);
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.bot{
+    border: 0;
+    border-radius: 10px;
+    height: 25px;
+    width: 5rem;
+ 
+}
+.fuente{
+    text-align: center;
+}
+
+#form{ 
+    top: 0;
+    right: 0;
+    padding-top: 2rem;
+    position: absolute;
+    height: 20rem;
+    width: 20rem;
+    background-color: rgb(224, 224, 224);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.hide{
+    display: none;
+}
+
+.active{
+    display: block;
+}
+
+.tex{
+    display: flex;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 2px solid #ffeeee;
+    border-radius: 15px;
+    height: 85%;
+    width: 85%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  
+}
+
+.titulo{
+    position: relative;
+    bottom:15px;
+}
+
+#task-title{
+    border: 0;
+    border-radius: 8px;
+    position: relative;
+    bottom: 15px;
+    padding: 5px;
+    background-color: rgba(138, 138, 138, 0.226);
+    width: 12rem;
+}
+
+.fecha{
+    position: relative;
+    bottom: 3px;
+}
+
+#task-date{
+    border: 0;
+    border-radius: 8px;
+    position: relative;
+    top:1px;
+    padding: 5px;
+    background-color: rgba(138, 138, 138, 0.226);
+    width: 12rem;
+}
+
+.desc{
+    position: relative;
+    top: 17px; 
+}
+
+#task-desc{
+    border: 0;
+    border-radius: 8px;
+    position: relative;
+    top:18px;
+    padding: 9px;
+    background-color: rgba(138, 138, 138, 0.226);
+    width: 12rem;
+} 
+
+.task-item{
+    position: relative;
+    top: 1rem;
+    border: 1px solid #000;
+    height: 6rem;
+    width: 15rem;
+    margin-left: 1rem;
+    
+}
+
+.submit{
+    position: relative;
+    top: 40px;
+    border: 0;
+    border-radius: 10px;
+    padding: 4px;
+    width: 15rem;
+   
+}
+
+.close{
+    position: relative;
+    top: 55px;
+    border: 0;
+    border-radius: 10px;
+    height: 25px;
+    padding: 4px;
+    width: 15rem;
+}
+
+.fa-regular, .fa-solid {
+   width: 20px;
+}
+
+    </style>
+     <div class="fuente">
+        <h1>Organizador de tareas</h1>
+        <button class="bot">Tarea nueva</button>
+        <div class="tex"></div>
+            <form id="form" class="hide">
+                <input type="hidden" id="task-id">
+                <div class="titulo"><label for="task-title">Título:</label></div>
+                <div><input type="text" id="task-title" name="title" required></div>
+
+                <div class="fecha"><label for="task-date">Fecha:</label></div>
+                <div><input type="date" id="task-date" name="date" required></div>
+
+                <div class="desc"><label for="task-desc">Descripción:</label></div>
+                <div><textarea id="task-desc" name="description" required></textarea></div>
+
+                <button type="submit" class="submit">Añadir</button>
+                <div><button type="button" class="close">Cerrar</button></div>
+            </form>
+    
+    </div>
+        <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const newTaskButton = document.querySelector('.bot');
+    const form = document.querySelector('#form');
+    const closeButton = document.querySelector('.close');
+    const taskForm = document.querySelector('#form');
+    const taskContainer = document.querySelector('.tex');
+    
+    // Función para guardar tareas en localStorage
+    function saveTasksToLocalStorage(tasks) {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // Función para obtener tareas de localStorage
+    function getTasksFromLocalStorage() {
+        const tasks = localStorage.getItem('tasks');
+        return tasks ? JSON.parse(tasks) : [];
+    }
+
+    // Función para renderizar tareas
+    function renderTasks(tasks) {
+        taskContainer.innerHTML = '';
+        tasks.forEach((task, index) => {
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-item';
+            taskItem.innerHTML = `
+                    <div class="task-item-buttons">
+                    <button class="edit" data-id="${index}"><i class="fa-regular fa-pen-to-square" style="color: #000000;"></i></button>
+                    <button class="delete" data-id="${index}"><i class="fa-solid fa-trash" style="color: #000000;"></i></button>
+                </div>
+                    <h3>${task.title}</h3>
+                    <p><strong>Fecha:</strong> ${task.date}</p>
+                    <p>${task.description}</p>
+                </div>
+               
+            `;
+            taskContainer.appendChild(taskItem);
+        });
+        addEventListenersToButtons();
+    }
+
+    // Obtener tareas de localStorage y renderizarlas
+    const tasks = getTasksFromLocalStorage();
+    renderTasks(tasks);
+
+    newTaskButton.addEventListener('click', () => {
+        taskForm.reset(); // Limpiar el formulario al crear una nueva tarea
+        document.querySelector('#task-id').value = ''; // Resetear el campo oculto de ID
+        form.classList.toggle('active');
+    });
+
+    closeButton.addEventListener('click', () => {
+        form.classList.remove('active');
+    });
+
+    taskForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const id = document.querySelector('#task-id').value;
+        const title = document.querySelector('#task-title').value;
+        const date = document.querySelector('#task-date').value;
+        const description = document.querySelector('#task-desc').value;
+        const newTask = { title, date, description };
+
+        if (id !== '') {
+            tasks[id] = newTask; // Editar tarea existente
+        } else {
+            tasks.push(newTask); // Añadir nueva tarea
+        }
+
+        renderTasks(tasks);
+        saveTasksToLocalStorage(tasks);
+
+        taskForm.reset();
+        document.querySelector('#task-id').value = '';
+        form.classList.remove('active');
+    });
+
+    function addEventListenersToButtons() {
+        const editButtons = document.querySelectorAll('.edit');
+        const deleteButtons = document.querySelectorAll('.delete');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const id = event.target.dataset.id;
+                const task = tasks[id];
+                document.querySelector('#task-id').value = id;
+                document.querySelector('#task-title').value = task.title;
+                document.querySelector('#task-date').value = task.date;
+                document.querySelector('#task-desc').value = task.description;
+                form.classList.add('active');
+            });
+        });
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const id = event.target.dataset.id;
+                tasks.splice(id, 1);
+                renderTasks(tasks);
+                saveTasksToLocalStorage(tasks);
+            });
+        });
+    }
+});
+
+        </script>
+</body>
+</html>
